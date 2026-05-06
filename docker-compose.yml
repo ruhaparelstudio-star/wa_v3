@@ -23,6 +23,9 @@ x-app-environment: &app-environment
   OPENAI_TIMEOUT_SECONDS: 10
   OPENAI_TEMPERATURE: 0
   OPENAI_MAX_OUTPUT_TOKENS: 500
+  SUPERADMIN_NAME: "Super Admin"
+  SUPERADMIN_EMAIL: superadmin@wa-v3.local
+  SUPERADMIN_PASSWORD: ChangeMe!2026
 
 x-app-build: &app-build
   context: .
