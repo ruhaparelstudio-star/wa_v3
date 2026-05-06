@@ -19,7 +19,8 @@ RUN composer install --no-interaction --prefer-dist --no-progress --no-scripts
 
 COPY . .
 
-RUN composer dump-autoload --optimize \
+RUN git config --global --add safe.directory /var/www/html \
+    && composer dump-autoload --optimize \
     && php artisan package:discover --ansi \
     && mkdir -p storage/app/private storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache

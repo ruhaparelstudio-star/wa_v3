@@ -31,6 +31,8 @@ Update this file after every meaningful implementation change.
 - `php artisan test` verified.
 - `php artisan route:list` verified.
 - `php artisan migrate --pretend` verified.
+- Docker PHP build now configures `/var/www/html` as a Git safe directory before Composer autoload generation.
+- Foundation reverified through Docker Compose after rebuild.
 
 ## In Progress
 
@@ -76,3 +78,4 @@ Update this file after every meaningful implementation change.
 - 2026-05-06: Completed feature unit `01-foundation/01-project-foundation.md`.
 - 2026-05-06: `laravel/tinker` and `nunomaduro/collision` were not used because their available releases did not resolve cleanly with Laravel 13 during foundation setup.
 - 2026-05-06: Added a minimal local `php artisan test` command that delegates to PHPUnit so the required project check works without incompatible dev packages.
+- 2026-05-06: Re-ran `docker compose up -d --build`, verified app/Nginx/MySQL/Redis/queue/scheduler containers, health endpoints, route list, migrate pretend, and PHPUnit suite.
