@@ -66,11 +66,11 @@ Create the initial Node.js + Baileys Gateway boundary and Laravel-side WA accoun
 
 ## Check when done
 
-- [ ] `wa-gateway` skeleton exists
-- [ ] Laravel internal inbound endpoint exists
-- [ ] Secret/signature required
-- [ ] Raw inbound stored
-- [ ] Duplicate message ignored
-- [ ] No business rules added to gateway
-- [ ] Tests pass
-- [ ] `context/progress-tracker.md` updated
+- [x] `wa-gateway` skeleton exists
+- [x] Laravel internal inbound endpoint exists
+- [x] Secret/signature required
+- [x] Raw inbound stored
+- [x] Duplicate message ignored
+- [x] No business rules added to gateway
+- [x] Tests pass
+- [x] `context/progress-tracker.md` updated

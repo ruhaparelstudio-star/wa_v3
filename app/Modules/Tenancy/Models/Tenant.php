@@ -4,6 +4,9 @@ namespace App\Modules\Tenancy\Models;
 
 use App\Models\User;
 use App\Modules\Activation\Models\ActivationToken;
+use App\Modules\Conversation\Models\Conversation;
+use App\Modules\Lead\Models\LeadProfile;
+use App\Modules\WhatsApp\Models\WAAccount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,5 +35,20 @@ class Tenant extends Model
     public function activationTokens(): HasMany
     {
         return $this->hasMany(ActivationToken::class);
+    }
+
+    public function waAccounts(): HasMany
+    {
+        return $this->hasMany(WAAccount::class);
+    }
+
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    public function leadProfiles(): HasMany
+    {
+        return $this->hasMany(LeadProfile::class);
     }
 }

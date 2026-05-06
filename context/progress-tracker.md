@@ -4,11 +4,11 @@ Update this file after every meaningful implementation change.
 
 ## Current Feature Unit
 
-- `context/feature/02-auth-tenant/02-auth-activation.md`
+- `context/feature/04-conversation-core/02-conversation-lead-core.md`
 
 ## Current Goal
 
-- Minimum tenant activation flow complete: superadmin can create tenant, activation token is generated, tenant admin sets password, tenant moves into trial, and login works.
+- Conversation and lead core complete: every processed valid inbound WhatsApp customer message resolves an active tenant-scoped conversation, logs an inbound message, creates or updates a lead profile, and keeps tenant reads scoped.
 
 ## Completed
 
@@ -64,6 +64,47 @@ Update this file after every meaningful implementation change.
 - Minimal superadmin tenant creation form added at `GET /superadmin/tenants/create`.
 - Tenant creation POST now supports both JSON API-style responses and web form redirects with the activation link in session flash data.
 - Gap-closure tests added for root redirect, dashboard/logout, superadmin web tenant creation, tenant-admin forbidden access, and login rate limiting.
+- Node.js `wa-gateway` skeleton added with Express health endpoint, simulated inbound forwarding, and WA account status forwarding.
+- Laravel WhatsApp module added with models/services/controllers/requests/middleware/jobs for the gateway boundary.
+- WhatsApp schema added:
+  - `wa_accounts`
+  - `wa_sessions`
+  - `wa_inbound_messages`
+  - `wa_outbound_messages`
+- Internal WhatsApp routes added:
+  - `POST /internal/whatsapp/inbound`
+  - `POST /internal/whatsapp/accounts/{waAccount}/status`
+- Internal WhatsApp routes require `X-WA-Gateway-Secret` and `X-WA-Signature` HMAC verification.
+- `.env.example` and Docker Compose app environment now include `WA_GATEWAY_INTERNAL_SECRET`.
+- Inbound payloads are stored in `raw_payload` before later processing.
+- Duplicate inbound messages are ignored through `wa_account_id + provider_message_id` idempotency and are not queued twice.
+- Minimal `ProcessInboundWhatsAppMessage` queued job added as a skeleton boundary for later conversation processing.
+- Outbound message model/table added with `queued` status for future gateway dispatch.
+- WhatsApp gateway feature tests added for missing signature rejection, valid simulated inbound acceptance, duplicate deduplication, and WA account/session status updates.
+- WhatsApp gateway checks verified: gateway `/health`, targeted WhatsApp tests, full PHPUnit suite, route list, and migrate pretend.
+- Conversation module added with conversation/message models and deterministic inbound services:
+  - `ConversationResolver`
+  - `MessageLogger`
+  - `ConversationTurnRecorder`
+  - `TenantConversationReader`
+- Lead module added with lead profile model and tenant-scoped services:
+  - `LeadProfileUpdater`
+  - `TenantLeadProfileReader`
+- Conversation and lead schema added:
+  - `conversations`
+  - `messages`
+  - `lead_profiles`
+- Conversation state defaults are stored on `conversations`:
+  - `current_stage`: `new_lead`
+  - `active_goal`: `initial_response`
+  - `agent_mode`: `active`
+  - `memory_mode`: `active`
+- Inbound WhatsApp processing job now records conversation/message/lead before marking inbound as processed.
+- Same tenant + WA account + customer phone reuses the existing active conversation.
+- Same customer phone in different tenants creates isolated conversations and lead profiles.
+- Tenant-scoped reader services return no record for another tenant's conversation or lead.
+- Conversation lead core tests added for new phone creation, existing phone reuse, inbound message logging, lead profile creation, state defaults, and tenant isolation.
+- Conversation lead core checks verified: targeted conversation tests, related WhatsApp tests, full PHPUnit suite, route list, migrate pretend, and migrate status.
 
 ## In Progress
 
@@ -71,7 +112,7 @@ Update this file after every meaningful implementation change.
 
 ## Next Up
 
-- Recommended next unit: `context/feature/03-whatsapp-agent/01-baileys-gateway-skeleton.md`
+- Recommended next unit: `context/feature/06-ai-sales-engine/01-intent-entity-layer.md`
 
 ## Open Questions
 
@@ -79,6 +120,7 @@ Update this file after every meaningful implementation change.
 - What exact UI color palette should be used for the dashboard?
 - Should UUIDs be used for all main tables from the start?
 - Which Docker base image should be used for PHP? Current foundation uses `php:8.3-fpm` because Laravel 13 requires PHP 8.3+.
+- Should the Node gateway be added to Docker Compose in a later unit, or run as a separately deployed service?
 
 ## Architecture Decisions
 
@@ -101,6 +143,11 @@ Update this file after every meaningful implementation change.
 - Login UI uses a minimal Blade view and is now connected to the custom session login action.
 - Auth activation uses custom minimal Laravel session auth instead of Breeze/Jetstream/Fortify to keep this unit tightly scoped.
 - Tenant activation policy assumption: new tenants become `trial` after successful activation.
+- WhatsApp gateway callbacks use shared secret plus raw-body SHA-256 HMAC signature.
+- WhatsApp duplicate detection is scoped per `wa_account_id + provider_message_id`.
+- Node gateway skeleton may forward simulated inbound/status callbacks, but tenant/business rules stay exclusively in Laravel.
+- Conversation resolution is scoped by `tenant_id`, `wa_account_id`, active status, and `customer_phone`.
+- Lead profile core starts with placeholder `cold` temperature only; no lead scoring or intent inference is performed in this unit.
 
 ## Session Notes
 
@@ -116,3 +163,5 @@ Update this file after every meaningful implementation change.
 - 2026-05-06: Completed feature unit `02-auth-tenant/02-auth-activation.md`; implemented minimal custom auth, tenant creation, activation token flow, tenant-user relationship, activation UI, and regression tests.
 - 2026-05-06: Added idempotent `SuperAdminSeeder`, documented local superadmin env values, seeded the Docker MySQL database, and audited foundation/login/auth-activation gaps.
 - 2026-05-06: Fixed in-scope audit gaps for the completed foundation/login/auth-activation units without adding WA, AI, billing, analytics, staff roles, or full dashboard behavior.
+- 2026-05-06: Completed feature unit `03-whatsapp-agent/01-baileys-gateway-skeleton.md`; implemented Node gateway skeleton, signed Laravel internal inbound/status boundary, WA account/session/inbound/outbound schema, idempotent raw inbound storage, queued processing skeleton, and regression tests.
+- 2026-05-06: Completed feature unit `04-conversation-core/02-conversation-lead-core.md`; implemented conversation/message/lead profile schema, inbound conversation resolver, inbound message logger, lead profile creation/update basics, tenant-scoped readers, job integration, and tenant isolation tests.

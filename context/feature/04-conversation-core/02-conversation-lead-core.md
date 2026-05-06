@@ -69,11 +69,11 @@ Create/reuse conversation and lead profile for every valid inbound WhatsApp cust
 
 ## Check when done
 
-- [ ] Conversation resolver works
-- [ ] Message logger works
-- [ ] Lead profile created
-- [ ] State defaults exist
-- [ ] Tenant isolation tested
-- [ ] No AI reply generation implemented in this unit
-- [ ] Tests pass
-- [ ] `context/progress-tracker.md` updated
+- [x] Conversation resolver works
+- [x] Message logger works
+- [x] Lead profile created
+- [x] State defaults exist
+- [x] Tenant isolation tested
+- [x] No AI reply generation implemented in this unit
+- [x] Tests pass
+- [x] `context/progress-tracker.md` updated
